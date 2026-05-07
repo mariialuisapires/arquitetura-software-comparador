@@ -9,4 +9,5 @@ public interface ServiceInterface {
     void delete(EntityInterface entity);
     void listAll();
     EntityInterface getById(UUID id);
+    void edit(EntityInterface entity);
 }

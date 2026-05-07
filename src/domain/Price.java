@@ -1,13 +1,34 @@
 package domain;
 
+import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
 
+@Entity
+@Table(name= "price")
 public class Price implements EntityInterface {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
+    @Column(name = "uuid", length = 36)
     private UUID uuid;
+
+    @Column (name= "price")
     private Float price;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name= "date")
     private Date date;
+
+    @ManyToOne
+    @JoinColumn (name = "product_id")
+    private Product product;
+
 
     public Price() {
     }
