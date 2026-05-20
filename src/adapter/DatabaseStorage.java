@@ -1,7 +1,6 @@
 package adapter;
 
 import domain.EntityInterface;
-import domain.Product;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -10,12 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class DatabaseStorage implements PersistInterface {
+public class DatabaseStorage<T extends EntityInterface> implements PersistInterface {
     private static final String PERSISTENCE_UNIT = "default";
 
     private final EntityManagerFactory emf;
+    private final Class<T> entityClass;
 
-    public DatabaseStorage() {
+    public DatabaseStorage(Class<T> entityClass) {
+        this.entityClass = entityClass;
         this.emf = Persistence.createEntityManagerFactory(PERSISTENCE_UNIT);
     }
 
@@ -24,8 +25,7 @@ public class DatabaseStorage implements PersistInterface {
         EntityManager em = emf.createEntityManager();
         try {
             em.getTransaction().begin();
-            if (entity.getUUID() != null
-                    && em.find(entity.getClass(), entity.getUUID()) != null) {
+            if (entity.getUUID() != null && em.find(entity.getClass(), entity.getUUID()) != null) {
                 em.merge(entity);
             } else {
                 em.persist(entity);
@@ -59,9 +59,8 @@ public class DatabaseStorage implements PersistInterface {
     public ArrayList<EntityInterface> listAll() {
         EntityManager em = emf.createEntityManager();
         try {
-            List<Product> result = em
-                    .createQuery("SELECT p FROM Product p", Product.class)
-                    .getResultList();
+            String jpql = "SELECT e FROM " + entityClass.getSimpleName() + " e";
+            List<T> result = em.createQuery(jpql, entityClass).getResultList();
             return new ArrayList<>(result);
         } finally {
             em.close();
@@ -72,7 +71,7 @@ public class DatabaseStorage implements PersistInterface {
     public EntityInterface findOneById(UUID id) {
         EntityManager em = emf.createEntityManager();
         try {
-            return em.find(Product.class, id);
+            return em.find(entityClass, id);
         } finally {
             em.close();
         }

@@ -1,6 +1,5 @@
 package service;
 
-import adapter.DatabaseStorage;
 import adapter.PersistInterface;
 import domain.EntityInterface;
 
@@ -8,7 +7,11 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 public abstract class BaseService implements ServiceInterface {
-    protected PersistInterface armazenamento = new DatabaseStorage();
+    protected final PersistInterface armazenamento;
+
+    public BaseService(PersistInterface armazenamento) {
+        this.armazenamento = armazenamento;
+    }
 
     @Override
     public void create(EntityInterface entity) {

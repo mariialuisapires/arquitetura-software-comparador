@@ -1,5 +1,11 @@
 package service;
 
+import adapter.DatabaseStorage;
+import domain.Price;
+
 public class PriceService extends BaseService {
-    protected PersistInterface armazenamento = new DatabaseStorage<>(Price.class);
+
+    public PriceService() {
+        super(new DatabaseStorage<>(Price.class));
+    }
 }

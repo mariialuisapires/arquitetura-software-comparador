@@ -12,6 +12,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "product")
 public class Product implements EntityInterface {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @JdbcTypeCode(SqlTypes.VARCHAR)
@@ -27,11 +28,12 @@ public class Product implements EntityInterface {
     @Column(name = "price")
     private Float price;
 
+    @Column(name = "store")
+    private String store;
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "date_price")
     private Date datePrice;
-
-
 
     @OneToMany(
             mappedBy = "product",
@@ -39,11 +41,17 @@ public class Product implements EntityInterface {
             orphanRemoval = true,
             fetch = FetchType.EAGER
     )
-    private List <Price> historicalPrice = new ArrayList<>();
+    private List<Price> historicalPrice = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "product",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.EAGER
+    )
+    private List<ProductLink> links = new ArrayList<>();
 
-    public Product() {
-    }
+    public Product() {}
 
     public Product(String sku, String name, Float price) {
         this.sku = sku;
@@ -58,64 +66,49 @@ public class Product implements EntityInterface {
         this.price = price;
     }
 
-    public String getSku() {
-        return sku;
-    }
-
-    public void setSku(String sku) {
-        this.sku = sku;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Float getPrice() {
-        return price;
+    public void addLink(ProductLink link) {
+        link.setProduct(this);
+        links.add(link);
     }
 
     public void setPrice(Float price) {
+        setPrice(price, null);
+    }
+
+    public void setPrice(Float price, String store) {
         if (this.price != null && this.datePrice != null) {
-            Price oldPrice = new Price(this.price, this.datePrice);
+            Price oldPrice = new Price(this.price, this.datePrice, this.store);
+            oldPrice.setProduct(this);
             historicalPrice.add(oldPrice);
         }
-
         this.price = price;
+        this.store = store;
         this.datePrice = new Date();
     }
 
-    public Date getDatePrice() {
-        return datePrice;
-    }
-
-    public void setDatePrice(Date datePrice) {
-        this.datePrice = datePrice;
-    }
-
-    public List<Price> getHistoricalPrice() {
-        return historicalPrice;
-    }
-
-    public void setHistoricalPrice(List<Price> historicalPrice) {
-        this.historicalPrice = historicalPrice;
-    }
+    public String getSku() { return sku; }
+    public void setSku(String sku) { this.sku = sku; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public Float getPrice() { return price; }
+    public String getStore() { return store; }
+    public Date getDatePrice() { return datePrice; }
+    public void setDatePrice(Date datePrice) { this.datePrice = datePrice; }
+    public List<Price> getHistoricalPrice() { return historicalPrice; }
+    public void setHistoricalPrice(List<Price> historicalPrice) { this.historicalPrice = historicalPrice; }
+    public List<ProductLink> getLinks() { return links; }
 
     @Override
-    public UUID getUUID() {
-        return this.uuid;
-    }
+    public UUID getUUID() { return uuid; }
 
     @Override
     public String toString() {
         return "Product{" +
-                "UUID='" + uuid.toString() +'\'' +
-                "Sku='" + sku + '\'' +
+                "uuid=" + uuid +
+                ", sku='" + sku + '\'' +
                 ", name='" + name + '\'' +
                 ", price=" + price +
+                ", store='" + store + '\'' +
                 ", datePrice=" + datePrice +
                 ", historicalPrice=" + historicalPrice +
                 '}';
