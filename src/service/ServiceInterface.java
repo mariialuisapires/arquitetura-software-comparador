@@ -6,8 +6,8 @@ import java.util.UUID;
 
 public interface ServiceInterface {
     void create(EntityInterface entity);
+    void edit(EntityInterface entity);
     void delete(EntityInterface entity);
     void listAll();
     EntityInterface getById(UUID id);
-    void edit(EntityInterface entity);
 }

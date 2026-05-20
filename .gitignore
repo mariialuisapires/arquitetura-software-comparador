@@ -3,6 +3,17 @@ out/
 !**/src/main/**/out/
 !**/src/test/**/out/
 .kotlin
+<<<<<<< HEAD
+=======
+.idea/
+*.iml
+
+### Maven ###
+target/
+
+### Local DB ###
+*.db
+>>>>>>> 8ae5a7a60ba1f7d3a72056e250423bcb5f840a2d
 
 ### Eclipse ###
 .apt_generated

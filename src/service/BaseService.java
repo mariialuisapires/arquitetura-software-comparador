@@ -19,6 +19,11 @@ public abstract class BaseService implements ServiceInterface {
     }
 
     @Override
+    public void edit(EntityInterface entity) {
+        this.armazenamento.save(entity);
+    }
+
+    @Override
     public void delete(EntityInterface entity) {
         this.armazenamento.delete(entity);
     }
@@ -34,11 +39,6 @@ public abstract class BaseService implements ServiceInterface {
     @Override
     public EntityInterface getById(UUID id) {
         return armazenamento.findOneById(id);
-    }
-
-    @Override
-    public void edit(EntityInterface entity) {
-        this.armazenamento.save(entity);
     }
 
     public UUID generateUUID() {
